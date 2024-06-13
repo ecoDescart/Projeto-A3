@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen</title>
+    <style>
+        #loading {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: #fff url('20240601_184639.jpg') no-repeat center center fixed;
+            background-size: cover;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+        #content {
+            display: none;
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .loader {
+            border: 20px solid #0ec73c;
+            border-radius: 60%;
+            border-top: 20px solid #158a32;
+            width: 200px;
+            height: 200px;
+            animation: spin 1s linear infinite;
+        }
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1em;
+            color: #000000;
+            font-family: Arial, sans-serif;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1em;
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="loader"></div>
+        <div class="loading-text">Carregando <span id="percentage">0%</span></div>
+        <div class="error-message" id="error-message">Erro ao carregar o conteúdo. Por favor, tente novamente.</div>
+    </div>
+    <iframe id="content" src="D:\Arquivos de Backup\Desktop\Program\Códigos\PROJETO - FACUL/A31306.html"></iframe>
+
+    <script>
+        const loadingTimeInSeconds = 10;
+        const updateInterval = 100;
+
+        const loadingTexts = {
+            'pt-BR': 'Carregando',
+            'en-US': 'Loading',
+            'es-ES': 'Cargando',
+        };
+        
+        const userLang = navigator.language || navigator.userLanguage;
+
+        const loadingText = loadingTexts[userLang] || loadingTexts['en-US'];
+        document.querySelector('.loading-text').firstChild.nodeValue = `${loadingText} `;
+
+        let percentage = 0;
+        const percentageElement = document.getElementById('percentage');
+        const interval = setInterval(() => {
+            percentage += 100 / (loadingTimeInSeconds * 1000 / updateInterval);
+            percentageElement.textContent = Math.floor(percentage) + "%";
+
+            if (percentage >= 100) {
+                clearInterval(interval);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+            }
+        }, updateInterval);
+
+        document.getElementById('content').onerror = function() {
+            clearInterval(interval);
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('error-message').style.display = 'block';
+        };
+    </script>
+</body>
+</html>
